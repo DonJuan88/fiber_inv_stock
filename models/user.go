@@ -29,7 +29,7 @@ type UpdateUser struct {
 }
 
 type Register struct {
-	Uuid                 string `json:"uid"`
+	ID			uuid.UUID     `json:"id" gorm:"primaryKey"`
 	FirstName            string `json:"firstname"`
 	LastName             string `json:"lastname"`
 	Email                string `json:"email" gorm:"unique"`

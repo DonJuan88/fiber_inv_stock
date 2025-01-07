@@ -6,11 +6,11 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-func CategoryIndex(c *fiber.Ctx) error {
+func CategoryIndex(c fiber.Ctx) error {
 	var category []*models.Categories
 
 	if res := config.DB.Debug().Find(&category); res.Error != nil {
@@ -25,7 +25,7 @@ func CategoryIndex(c *fiber.Ctx) error {
 	})
 }
 
-func CategoryShow(c *fiber.Ctx) error {
+func CategoryShow(c fiber.Ctx) error {
 	var category []*models.Categories
 
 	if result := config.DB.Debug().First(&category, c.Params("id")); result.Error != nil {
@@ -40,10 +40,10 @@ func CategoryShow(c *fiber.Ctx) error {
 
 }
 
-func CategoryCreate(c *fiber.Ctx) error {
+func CategoryCreate(c fiber.Ctx) error {
 	category := new(models.Categories)
 
-	if err := c.BodyParser(category); err != nil {
+	if err := c.Bind().Body(category); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
@@ -93,10 +93,10 @@ func CategoryCreate(c *fiber.Ctx) error {
 	})
 }
 
-func CategoryUpdate(c *fiber.Ctx) error {
+func CategoryUpdate(c fiber.Ctx) error {
 	category := new(models.Categories)
 
-	if err := c.BodyParser(category); err != nil {
+	if err := c.Bind().Body(category); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
@@ -108,7 +108,7 @@ func CategoryUpdate(c *fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID format"})
 	}
 
-		// Validate required fields
+	// Validate required fields
 	if category.CategoryCode == "" ||
 		category.CategoryName == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
@@ -123,7 +123,7 @@ func CategoryUpdate(c *fiber.Ctx) error {
 	})
 }
 
-func CategoryDelete(c *fiber.Ctx) error {
+func CategoryDelete(c fiber.Ctx) error {
 	category := new(models.Categories)
 
 	id := c.Params("id")
@@ -139,7 +139,7 @@ func CategoryDelete(c *fiber.Ctx) error {
 	})
 }
 
-/* func categoryearch(c *fiber.Ctx) error {
+/* func categoryearch(c fiber.Ctx) error {
 	query := c.Query("q")
 
 	// Respond with the query parameter

@@ -5,26 +5,27 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-/* func purchaseDetailIndex(c *fiber.Ctx) error {
-	var purchaseDetails []*models.purchaseDetailetail
+/*
+	 func purchaseDetailIndex(c fiber.Ctx) error {
+		var purchaseDetails []*models.purchaseDetailetail
 
-	if res := config.DB.Debug().Find(&purchaseDetails); res.Error != nil {
-		c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"status": "purchaseDetail not found",
+		if res := config.DB.Debug().Find(&purchaseDetails); res.Error != nil {
+			c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status": "purchaseDetail not found",
+			})
+
+		}
+
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"data": purchaseDetails,
 		})
-
 	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"data": purchaseDetails,
-	})
-}
 */
-func PurchaseDetailShow(c *fiber.Ctx) error {
+func PurchaseDetailShow(c fiber.Ctx) error {
 	var purchaseDetail []*models.PurchaseDetail
 
 	if result := config.DB.Debug().First(&purchaseDetail, c.Params("id")); result.Error != nil {
@@ -39,28 +40,26 @@ func PurchaseDetailShow(c *fiber.Ctx) error {
 
 }
 
-func PurchaseDetailCreate(c *fiber.Ctx) error {
+func PurchaseDetailCreate(c fiber.Ctx) error {
 	purchaseDetail := new(models.PurchaseDetail)
 
-	if err := c.BodyParser(purchaseDetail); err != nil {
+	if err := c.Bind().Body(purchaseDetail); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
 	// Validate required fields
-	if 
-	purchaseDetail.PurchaseNo    == "" || 
-	purchaseDetail.PurchaseDate.GoString()  == "" || 
-	purchaseDetail.ItemCode      == "" || 
-	purchaseDetail.Qty           <0 || 
-	purchaseDetail.BasePrice     <0 ||
-	purchaseDetail.Discount      <0 ||
-	purchaseDetail.PurchasePrice <0  {
+	if purchaseDetail.PurchaseNo == "" ||
+		purchaseDetail.PurchaseDate.GoString() == "" ||
+		purchaseDetail.ItemCode == "" ||
+		purchaseDetail.Qty < 0 ||
+		purchaseDetail.BasePrice < 0 ||
+		purchaseDetail.Discount < 0 ||
+		purchaseDetail.PurchasePrice < 0 {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
-	
 	// Validation
 	validate := validator.New()
 	errValidate := validate.Struct(purchaseDetail)
@@ -72,14 +71,14 @@ func PurchaseDetailCreate(c *fiber.Ctx) error {
 
 	newpurchaseDetail := models.PurchaseDetail{
 
-	ID:                 uuid.New(),
-	PurchaseNo    : purchaseDetail.PurchaseNo    ,
-	PurchaseDate  : purchaseDetail.PurchaseDate  ,
-	ItemCode      : purchaseDetail.ItemCode      ,
-	Qty           : purchaseDetail.Qty           ,
-	BasePrice     : purchaseDetail.BasePrice     ,
-	Discount      : purchaseDetail.Discount     ,
-	PurchasePrice : purchaseDetail.PurchasePrice , }
+		ID:            uuid.New(),
+		PurchaseNo:    purchaseDetail.PurchaseNo,
+		PurchaseDate:  purchaseDetail.PurchaseDate,
+		ItemCode:      purchaseDetail.ItemCode,
+		Qty:           purchaseDetail.Qty,
+		BasePrice:     purchaseDetail.BasePrice,
+		Discount:      purchaseDetail.Discount,
+		PurchasePrice: purchaseDetail.PurchasePrice}
 	config.DB.Debug().Create(&newpurchaseDetail)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -87,10 +86,10 @@ func PurchaseDetailCreate(c *fiber.Ctx) error {
 	})
 }
 
-func PurchaseDetailUpdate(c *fiber.Ctx) error {
+func PurchaseDetailUpdate(c fiber.Ctx) error {
 	purchaseDetail := new(models.PurchaseDetail)
 
-	if err := c.BodyParser(purchaseDetail); err != nil {
+	if err := c.Bind().Body(purchaseDetail); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
@@ -105,32 +104,30 @@ func PurchaseDetailUpdate(c *fiber.Ctx) error {
 	}
 
 	// Validate required fields
-	if 
-	
-	purchaseDetail.PurchaseNo    == "" || 
-	purchaseDetail.PurchaseDate.GoString()  == "" || 
-	purchaseDetail.ItemCode      == "" || 
-	purchaseDetail.Qty          <0  || 
-	purchaseDetail.BasePrice     <0 ||
-	purchaseDetail.Discount      <0 ||
-	purchaseDetail.PurchasePrice <0  {
+	if purchaseDetail.PurchaseNo == "" ||
+		purchaseDetail.PurchaseDate.GoString() == "" ||
+		purchaseDetail.ItemCode == "" ||
+		purchaseDetail.Qty < 0 ||
+		purchaseDetail.BasePrice < 0 ||
+		purchaseDetail.Discount < 0 ||
+		purchaseDetail.PurchasePrice < 0 {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
 	config.DB.Debug().Model(&models.PurchaseDetail{}).Where("id = ?", id).Updates(map[string]interface{}{
-	  "purchase_no" :purchaseDetail.PurchaseNo,      
-	  "purchase_date":purchaseDetail.PurchaseDate,    
-	  "code"        :purchaseDetail.ItemCode,        
-	  "qty"         :purchaseDetail.Qty,         
- 	  "baseprice"   :purchaseDetail.BasePrice,     
-	  "discount"    :purchaseDetail.Discount,      
-	 "purchaseprice" :purchaseDetail.PurchasePrice,    })
+		"purchase_no":   purchaseDetail.PurchaseNo,
+		"purchase_date": purchaseDetail.PurchaseDate,
+		"code":          purchaseDetail.ItemCode,
+		"qty":           purchaseDetail.Qty,
+		"baseprice":     purchaseDetail.BasePrice,
+		"discount":      purchaseDetail.Discount,
+		"purchaseprice": purchaseDetail.PurchasePrice})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": purchaseDetail,
 	})
 }
 
-func PurchaseDetailDelete(c *fiber.Ctx) error {
+func PurchaseDetailDelete(c fiber.Ctx) error {
 	purchaseDetail := new(models.PurchaseDetail)
 
 	id := c.Params("id")

@@ -6,11 +6,11 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-func ProductIndex(c *fiber.Ctx) error {
+func ProductIndex(c fiber.Ctx) error {
 	var products []*models.Product
 
 	if res := config.DB.Debug().Find(&products); res.Error != nil {
@@ -25,7 +25,7 @@ func ProductIndex(c *fiber.Ctx) error {
 	})
 }
 
-func ProductShow(c *fiber.Ctx) error {
+func ProductShow(c fiber.Ctx) error {
 	var product []*models.Product
 
 	if result := config.DB.Debug().First(&product, c.Params("id")); result.Error != nil {
@@ -40,29 +40,28 @@ func ProductShow(c *fiber.Ctx) error {
 
 }
 
-func ProductCreate(c *fiber.Ctx) error {
+func ProductCreate(c fiber.Ctx) error {
 	product := new(models.Product)
 
-	if err := c.BodyParser(product); err != nil {
+	if err := c.Bind().Body(product); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
 	// Validate required fields
-	if 
-	product.ProductCode == "" ||
-	product.Barcode1     == "" ||
-	product.Barcode2     == "" ||
-	product.ProductName  == "" ||
-	product.Description  == "" ||
-	product.Category     == "" ||
-	product.Brand        == "" ||
-	product.BasePrice    <0 ||
-	product.SalePrice1   <0 ||
-	product.SalePrice2   <0 ||
-	product.SalePrice3   <0||
-	product.Unit         == ""     {
+	if product.ProductCode == "" ||
+		product.Barcode1 == "" ||
+		product.Barcode2 == "" ||
+		product.ProductName == "" ||
+		product.Description == "" ||
+		product.Category == "" ||
+		product.Brand == "" ||
+		product.BasePrice < 0 ||
+		product.SalePrice1 < 0 ||
+		product.SalePrice2 < 0 ||
+		product.SalePrice3 < 0 ||
+		product.Unit == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
@@ -92,20 +91,20 @@ func ProductCreate(c *fiber.Ctx) error {
 
 	newproduct := models.Product{
 
-		ID:                 uuid.New(),
-	ProductCode : product.ProductCode,
-	Barcode1 : product.Barcode1,
-	Barcode2 : product.Barcode2,
-	ProductName : product.ProductName,
-	Description : product.Description,
-	Category : product.Category,
-	Brand :product.Brand ,
-	BasePrice: product.BasePrice,
-	SalePrice1 : product.SalePrice1,
-	SalePrice2: product.SalePrice2,
-	SalePrice3: product.SalePrice3,
-	Unit : product.Unit, 
-	Active : product.Active  }
+		ID:          uuid.New(),
+		ProductCode: product.ProductCode,
+		Barcode1:    product.Barcode1,
+		Barcode2:    product.Barcode2,
+		ProductName: product.ProductName,
+		Description: product.Description,
+		Category:    product.Category,
+		Brand:       product.Brand,
+		BasePrice:   product.BasePrice,
+		SalePrice1:  product.SalePrice1,
+		SalePrice2:  product.SalePrice2,
+		SalePrice3:  product.SalePrice3,
+		Unit:        product.Unit,
+		Active:      product.Active}
 	//
 	// hashPassword, err := utils.HashPassword(user.Password)
 	// if err != nil {
@@ -123,10 +122,10 @@ func ProductCreate(c *fiber.Ctx) error {
 	})
 }
 
-func ProductUpdate(c *fiber.Ctx) error {
+func ProductUpdate(c fiber.Ctx) error {
 	product := new(models.Product)
 
-	if err := c.BodyParser(product); err != nil {
+	if err := c.Bind().Body(product); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
@@ -142,41 +141,41 @@ func ProductUpdate(c *fiber.Ctx) error {
 
 	// Validate required fields
 	if product.ProductCode == "" ||
-	product.Barcode1     == "" ||
-	product.Barcode2     == "" ||
-	product.ProductName  == "" ||
-	product.Description  == "" ||
-	product.Category     == "" ||
-	product.Brand        == "" ||
-	product.BasePrice    <0 ||
-	product.SalePrice1   <0 ||
-	product.SalePrice2   <0 ||
-	product.SalePrice3   <0||
-	product.Unit         == ""  {
+		product.Barcode1 == "" ||
+		product.Barcode2 == "" ||
+		product.ProductName == "" ||
+		product.Description == "" ||
+		product.Category == "" ||
+		product.Brand == "" ||
+		product.BasePrice < 0 ||
+		product.SalePrice1 < 0 ||
+		product.SalePrice2 < 0 ||
+		product.SalePrice3 < 0 ||
+		product.Unit == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
 	config.DB.Debug().Model(&models.Product{}).Where("id = ?", id).Updates(map[string]interface{}{
-	"code": 	product.ProductCode,
-	"barcode1" :product.Barcode1     ,
-	 "barcode2":product.Barcode2     ,
-	"name":product.ProductName  ,
-	 "desc":product.Description  ,
-	 "category":product.Category     ,
-	 "brand":product.Brand        ,
-	 "baseprice":product.BasePrice  ,
-	 "saleprice1":product.SalePrice1 ,
-	 "saleprice2":product.SalePrice2 ,
-	 "saleprice3":product.SalePrice3,
-	 "unit":product.Unit ,
-		"active":               product.Active,
+		"code":       product.ProductCode,
+		"barcode1":   product.Barcode1,
+		"barcode2":   product.Barcode2,
+		"name":       product.ProductName,
+		"desc":       product.Description,
+		"category":   product.Category,
+		"brand":      product.Brand,
+		"baseprice":  product.BasePrice,
+		"saleprice1": product.SalePrice1,
+		"saleprice2": product.SalePrice2,
+		"saleprice3": product.SalePrice3,
+		"unit":       product.Unit,
+		"active":     product.Active,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": product,
 	})
 }
 
-func ProductDelete(c *fiber.Ctx) error {
+func ProductDelete(c fiber.Ctx) error {
 	products := new(models.Product)
 
 	id := c.Params("id")

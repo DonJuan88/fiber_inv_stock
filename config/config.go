@@ -3,7 +3,6 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-
 	DATABASE_HOST     string
 	DATABASE_USER     string
 	DATABASE_PASSWORD string

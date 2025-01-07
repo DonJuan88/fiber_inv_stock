@@ -5,11 +5,11 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-func BranchStockIndex(c *fiber.Ctx) error {
+func BranchStockIndex(c fiber.Ctx) error {
 	var branchStocks []*models.BranchStockPrice
 
 	if res := config.DB.Debug().Find(&branchStocks); res.Error != nil {
@@ -24,7 +24,7 @@ func BranchStockIndex(c *fiber.Ctx) error {
 	})
 }
 
-func BranchStockShowAll(c *fiber.Ctx) error {
+func BranchStockShowAll(c fiber.Ctx) error {
 	var branchStocks []*models.BranchStockPrice
 
 	if result := config.DB.Debug().First(&branchStocks, c.Params("id")); result.Error != nil {
@@ -39,7 +39,7 @@ func BranchStockShowAll(c *fiber.Ctx) error {
 
 }
 
-func BranchStockShowStore(c *fiber.Ctx) error {
+func BranchStockShowStore(c fiber.Ctx) error {
 	var branchStocks []*models.BranchStockPrice
 
 	if result := config.DB.Debug().First(&branchStocks, "branch_code=?", c.Params("branch_code")); result.Error != nil {
@@ -54,32 +54,29 @@ func BranchStockShowStore(c *fiber.Ctx) error {
 
 }
 
-
-
-func BranchStockCreate(c *fiber.Ctx) error {
+func BranchStockCreate(c fiber.Ctx) error {
 	branchStock := new(models.BranchStockPrice)
 
-	if err := c.BodyParser(branchStock); err != nil {
+	if err := c.Bind().Body(branchStock); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
 	// Validate required fields
-	if 
-	branchStock.BranchCode =="" || 
-	branchStock.ProductCode =="" ||
-	branchStock.Barcode1    =="" ||
-	branchStock.Barcode2    =="" ||
-	branchStock.BasePrice  <= 0 ||
-	branchStock.SalePrice <=0 ||
-	branchStock.Stock       <=0 ||
-	branchStock.MinStock <=0 {
-	return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
+	if branchStock.BranchCode == "" ||
+		branchStock.ProductCode == "" ||
+		branchStock.Barcode1 == "" ||
+		branchStock.Barcode2 == "" ||
+		branchStock.BasePrice <= 0 ||
+		branchStock.SalePrice <= 0 ||
+		branchStock.Stock <= 0 ||
+		branchStock.MinStock <= 0 {
+		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
 	// Check if BranchStock exists
-	
+
 	// Validation
 	validate := validator.New()
 	errValidate := validate.Struct(branchStock)
@@ -92,15 +89,15 @@ func BranchStockCreate(c *fiber.Ctx) error {
 
 	newBranchStock := models.BranchStockPrice{
 
-		ID:                 uuid.New(),
-		BranchCode:branchStock.BranchCode,
-		ProductCode:branchStock.ProductCode,
-		Barcode1:branchStock.Barcode1,
-		Barcode2:branchStock.Barcode2,
-		BasePrice:branchStock.BasePrice,
-		SalePrice:branchStock.SalePrice,
-		Stock:branchStock.Stock,
-		MinStock :branchStock.MinStock,
+		ID:          uuid.New(),
+		BranchCode:  branchStock.BranchCode,
+		ProductCode: branchStock.ProductCode,
+		Barcode1:    branchStock.Barcode1,
+		Barcode2:    branchStock.Barcode2,
+		BasePrice:   branchStock.BasePrice,
+		SalePrice:   branchStock.SalePrice,
+		Stock:       branchStock.Stock,
+		MinStock:    branchStock.MinStock,
 	}
 	//
 	// hashPassword, err := utils.HashPassword(user.Password)
@@ -119,10 +116,10 @@ func BranchStockCreate(c *fiber.Ctx) error {
 	})
 }
 
-func BranchStockUpdate(c *fiber.Ctx) error {
+func BranchStockUpdate(c fiber.Ctx) error {
 	branchStock := new(models.BranchStockPrice)
 
-	if err := c.BodyParser(branchStock); err != nil {
+	if err := c.Bind().Body(branchStock); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
@@ -137,21 +134,21 @@ func BranchStockUpdate(c *fiber.Ctx) error {
 	}
 
 	config.DB.Debug().Model(&models.BranchStockPrice{}).Where("id = ?", id).Updates(map[string]interface{}{
-	"branch_code" : branchStock.BranchCode,
-	"code" : branchStock.ProductCode,
-	"barcode1" :branchStock.Barcode1,
-	"barcode2" : branchStock.Barcode2,
-	"baseprice" : branchStock.BasePrice,
-	"saleprice" : branchStock.SalePrice,
-	"stock" : branchStock.Stock,
-	"min_stock" : branchStock.MinStock,
+		"branch_code": branchStock.BranchCode,
+		"code":        branchStock.ProductCode,
+		"barcode1":    branchStock.Barcode1,
+		"barcode2":    branchStock.Barcode2,
+		"baseprice":   branchStock.BasePrice,
+		"saleprice":   branchStock.SalePrice,
+		"stock":       branchStock.Stock,
+		"min_stock":   branchStock.MinStock,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "succes update detail stock",
 	})
 }
 
-/* func BranchStockDelete(c *fiber.Ctx) error {
+/* func BranchStockDelete(c fiber.Ctx) error {
 	BranchStocks := new(models.BranchStockPrice)
 
 	id := c.Params("id")
@@ -167,7 +164,7 @@ func BranchStockUpdate(c *fiber.Ctx) error {
 	})
 } */
 
-/* func BranchStockSearch(c *fiber.Ctx) error {
+/* func BranchStockSearch(c fiber.Ctx) error {
 	query := c.Query("q")
 
 	// Respond with the query parameter

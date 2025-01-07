@@ -6,12 +6,11 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-
-func CustomerIndex(c *fiber.Ctx) error {
+func CustomerIndex(c fiber.Ctx) error {
 	var customers []*models.Customer
 
 	if res := config.DB.Debug().Find(&customers); res.Error != nil {
@@ -25,7 +24,7 @@ func CustomerIndex(c *fiber.Ctx) error {
 		"data": customers,
 	})
 }
-func CustomerShow(c *fiber.Ctx) error {
+func CustomerShow(c fiber.Ctx) error {
 	var customer []*models.Customer
 
 	if result := config.DB.Debug().First(&customer, c.Params("id")); result.Error != nil {
@@ -40,46 +39,42 @@ func CustomerShow(c *fiber.Ctx) error {
 
 }
 
-func CustomerCreate(c *fiber.Ctx) error {
+func CustomerCreate(c fiber.Ctx) error {
 	customer := new(models.Customer)
 
-	if err := c.BodyParser(customer); err != nil {
+	if err := c.Bind().Body(customer); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
 	// Validate required fields
-	if 
-	customer.Code   == "" ||
-	customer.Name          == "" ||
-	customer.ContactPerson == "" ||
-	customer.Email         == "" ||
-	customer.Phone         == "" ||
-	customer.Address       == "" ||
-	customer.City          == "" ||
-	customer.State         == "" ||
-	customer.PostalCode    == "" ||
-	customer.Country       == "" {
-		
+	if customer.Code == "" ||
+		customer.Name == "" ||
+		customer.ContactPerson == "" ||
+		customer.Email == "" ||
+		customer.Phone == "" ||
+		customer.Address == "" ||
+		customer.City == "" ||
+		customer.State == "" ||
+		customer.PostalCode == "" ||
+		customer.Country == "" {
+
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
-
 
 	// Check if customer exists
 	exists, err := helper.CheckCustomerExists(config.DB, customer.Code)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-   "message": "failed to validate",
-   "error":  err,
-  })
+			"message": "failed to validate",
+			"error":   err,
+		})
 	}
 
-	
 	if exists {
 		return c.Status(400).JSON(fiber.Map{
-	   "message": "branch Code already registered",
-
+			"message": "branch Code already registered",
 		})
 	}
 
@@ -95,17 +90,17 @@ func CustomerCreate(c *fiber.Ctx) error {
 
 	newcustomer := models.Customer{
 
-		ID: uuid.New(),
-		Code :customer.Code,
-		Name:customer.Name,
-		ContactPerson:customer.ContactPerson,
-		Email:customer.Email,
-		Phone: customer.Phone,
-		Address:customer.Address,
-		City:customer.City,
-		State:customer.State,
-		PostalCode:customer.PostalCode,
-		Country: customer.Country,
+		ID:            uuid.New(),
+		Code:          customer.Code,
+		Name:          customer.Name,
+		ContactPerson: customer.ContactPerson,
+		Email:         customer.Email,
+		Phone:         customer.Phone,
+		Address:       customer.Address,
+		City:          customer.City,
+		State:         customer.State,
+		PostalCode:    customer.PostalCode,
+		Country:       customer.Country,
 	}
 	config.DB.Debug().Create(&newcustomer)
 
@@ -114,10 +109,10 @@ func CustomerCreate(c *fiber.Ctx) error {
 	})
 }
 
-func CustomerUpdate(c *fiber.Ctx) error {
+func CustomerUpdate(c fiber.Ctx) error {
 	customer := new(models.Customer)
 
-	if err := c.BodyParser(customer); err != nil {
+	if err := c.Bind().Body(customer); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
@@ -130,38 +125,37 @@ func CustomerUpdate(c *fiber.Ctx) error {
 	}
 
 	// Validate required fields
-	if 
-	customer.Code   == "" ||
-	customer.Name          == "" ||
-	customer.ContactPerson == "" ||
-	customer.Email         == "" ||
-	customer.Phone         == "" ||
-	customer.Address       == "" ||
-	customer.City          == "" ||
-	customer.State         == "" ||
-	customer.Country       == "" {
-		
+	if customer.Code == "" ||
+		customer.Name == "" ||
+		customer.ContactPerson == "" ||
+		customer.Email == "" ||
+		customer.Phone == "" ||
+		customer.Address == "" ||
+		customer.City == "" ||
+		customer.State == "" ||
+		customer.Country == "" {
+
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
 	config.DB.Debug().Model(&models.Customer{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"code":customer.Code,
-		"name":customer.Name,
-		"cp":customer.ContactPerson,
-		"email":customer.Email,
-		"phone":customer.Phone,
-		"address":customer.Address,
-		"city":customer.City,
-		"state":customer.State,
-		"postalcode":customer.PostalCode,
-		"country":customer.Country,
+		"code":       customer.Code,
+		"name":       customer.Name,
+		"cp":         customer.ContactPerson,
+		"email":      customer.Email,
+		"phone":      customer.Phone,
+		"address":    customer.Address,
+		"city":       customer.City,
+		"state":      customer.State,
+		"postalcode": customer.PostalCode,
+		"country":    customer.Country,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": customer,
 	})
 }
 
-func CustomerDelete(c *fiber.Ctx) error {
+func CustomerDelete(c fiber.Ctx) error {
 	customer := new(models.Customer)
 
 	id := c.Params("id")
@@ -177,7 +171,7 @@ func CustomerDelete(c *fiber.Ctx) error {
 	})
 }
 
-/* func customerearch(c *fiber.Ctx) error {
+/* func customerearch(c fiber.Ctx) error {
 	query := c.Query("q")
 
 	// Respond with the query parameter

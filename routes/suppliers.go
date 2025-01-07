@@ -3,7 +3,7 @@ package routes
 import (
 	"inv_fiber/controllers"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 func SupplierRoutes(r fiber.Router) {

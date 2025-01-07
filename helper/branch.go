@@ -25,5 +25,4 @@ func CheckBranchExists(db *gorm.DB, code string) (bool, error) {
 	return false, result.Error
 }
 
-
 //

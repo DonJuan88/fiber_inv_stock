@@ -5,11 +5,11 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-func PurchaseIndex(c *fiber.Ctx) error {
+func PurchaseIndex(c fiber.Ctx) error {
 	var purchases []*models.Purchase
 
 	if res := config.DB.Debug().Find(&purchases); res.Error != nil {
@@ -24,7 +24,7 @@ func PurchaseIndex(c *fiber.Ctx) error {
 	})
 }
 
-func PurchaseShow(c *fiber.Ctx) error {
+func PurchaseShow(c fiber.Ctx) error {
 	var purchase []*models.Purchase
 
 	if result := config.DB.Debug().First(&purchase, c.Params("id")); result.Error != nil {
@@ -39,34 +39,32 @@ func PurchaseShow(c *fiber.Ctx) error {
 
 }
 
-func PurchaseCreate(c *fiber.Ctx) error {
+func PurchaseCreate(c fiber.Ctx) error {
 	purchase := new(models.Purchase)
 
-	if err := c.BodyParser(purchase); err != nil {
+	if err := c.Bind().Body(purchase); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
 	// Validate required fields
-	if 
-	purchase.PurchaseNo    == "" || 
-	purchase.PurchaseDate.GoString()  == "" || 
-	purchase.BranchCode    == "" || 
-	purchase.Supplier      == "" || 
-	purchase.ShippingCost  <0 || 
-	purchase.Tax1          <0 || 
-	purchase.Tax2          <0 || 
-	purchase.Total         <0 || 
-	purchase.AccountID     == "" || 
-	purchase.PaymentType   == "" || 
-	purchase.ShipStatus    == "" || 
-	purchase.Reference     == "" || 
-	purchase.Notes  ==""        {
+	if purchase.PurchaseNo == "" ||
+		purchase.PurchaseDate.GoString() == "" ||
+		purchase.BranchCode == "" ||
+		purchase.Supplier == "" ||
+		purchase.ShippingCost < 0 ||
+		purchase.Tax1 < 0 ||
+		purchase.Tax2 < 0 ||
+		purchase.Total < 0 ||
+		purchase.AccountID == "" ||
+		purchase.PaymentType == "" ||
+		purchase.ShipStatus == "" ||
+		purchase.Reference == "" ||
+		purchase.Notes == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
-	
 	// Validation
 	validate := validator.New()
 	errValidate := validate.Struct(purchase)
@@ -78,21 +76,21 @@ func PurchaseCreate(c *fiber.Ctx) error {
 
 	newpurchase := models.Purchase{
 
-		ID:                 uuid.New(),
-	PurchaseNo    : purchase.PurchaseNo  ,
-	PurchaseDate  : purchase.PurchaseDate,
-	BranchCode    : purchase.BranchCode  ,
-	Supplier      : purchase.Supplier,
-	ShippingCost  : purchase.ShippingCost,
-	Tax1          : purchase.Tax1,        
-	Tax2          : purchase.Tax2 ,       
-	Total         : purchase.Total ,      
-	AccountID     : purchase.AccountID,
-	PaymentType   : purchase.PaymentType,
-	ShipStatus    : purchase.ShipStatus,
-	Reference     : purchase.Reference  ,
-	Notes         : purchase.Notes       ,
-	PaymentStatus : purchase.PaymentStatus }
+		ID:            uuid.New(),
+		PurchaseNo:    purchase.PurchaseNo,
+		PurchaseDate:  purchase.PurchaseDate,
+		BranchCode:    purchase.BranchCode,
+		Supplier:      purchase.Supplier,
+		ShippingCost:  purchase.ShippingCost,
+		Tax1:          purchase.Tax1,
+		Tax2:          purchase.Tax2,
+		Total:         purchase.Total,
+		AccountID:     purchase.AccountID,
+		PaymentType:   purchase.PaymentType,
+		ShipStatus:    purchase.ShipStatus,
+		Reference:     purchase.Reference,
+		Notes:         purchase.Notes,
+		PaymentStatus: purchase.PaymentStatus}
 
 	config.DB.Debug().Create(&newpurchase)
 
@@ -101,10 +99,10 @@ func PurchaseCreate(c *fiber.Ctx) error {
 	})
 }
 
-func PurchaseUpdate(c *fiber.Ctx) error {
+func PurchaseUpdate(c fiber.Ctx) error {
 	purchase := new(models.Purchase)
 
-	if err := c.BodyParser(purchase); err != nil {
+	if err := c.Bind().Body(purchase); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
@@ -119,45 +117,44 @@ func PurchaseUpdate(c *fiber.Ctx) error {
 	}
 
 	// Validate required fields
-	if 
-	purchase.PurchaseNo    == "" || 
-	purchase.PurchaseDate.GoString() ==""  || 
-	purchase.BranchCode    == "" || 
-	purchase.Supplier      == "" || 
-	purchase.ShippingCost  <0 || 
-	purchase.Tax1          <0 || 
-	purchase.Tax2          <0 || 
-	purchase.Total         <0 || 
-	purchase.AccountID     == "" || 
-	purchase.PaymentType   == "" || 
-	purchase.ShipStatus    == "" || 
-	purchase.Reference     == "" || 
-	purchase.Notes  ==""  {
+	if purchase.PurchaseNo == "" ||
+		purchase.PurchaseDate.GoString() == "" ||
+		purchase.BranchCode == "" ||
+		purchase.Supplier == "" ||
+		purchase.ShippingCost < 0 ||
+		purchase.Tax1 < 0 ||
+		purchase.Tax2 < 0 ||
+		purchase.Total < 0 ||
+		purchase.AccountID == "" ||
+		purchase.PaymentType == "" ||
+		purchase.ShipStatus == "" ||
+		purchase.Reference == "" ||
+		purchase.Notes == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
 	config.DB.Debug().Model(&models.Purchase{}).Where("id = ?", id).Updates(map[string]interface{}{
-	    "purchase_no" :purchase.PurchaseNo,
-	  "purchase_date":purchase.PurchaseDate,
-	    "branch":purchase.BranchCode,
-	      "supplier":purchase.Supplier,
-	  "shippingprice":purchase.ShippingCost,
-	          "tax1":purchase.Tax1,
-	          "tax2" :purchase.Tax2,
-	         "total" :purchase.Total,
-	     "accid" :purchase.AccountID,
-	   "paymenttype" :purchase.PaymentType,
-	    "shippingstatus" :purchase.ShipStatus,
-	     "reference" :purchase.Reference,
-	         "notes" :purchase.Notes,
-	 "status gorm:default:false":purchase.PaymentStatus,
+		"purchase_no":               purchase.PurchaseNo,
+		"purchase_date":             purchase.PurchaseDate,
+		"branch":                    purchase.BranchCode,
+		"supplier":                  purchase.Supplier,
+		"shippingprice":             purchase.ShippingCost,
+		"tax1":                      purchase.Tax1,
+		"tax2":                      purchase.Tax2,
+		"total":                     purchase.Total,
+		"accid":                     purchase.AccountID,
+		"paymenttype":               purchase.PaymentType,
+		"shippingstatus":            purchase.ShipStatus,
+		"reference":                 purchase.Reference,
+		"notes":                     purchase.Notes,
+		"status gorm:default:false": purchase.PaymentStatus,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": purchase,
 	})
 }
 
-func PurchaseDelete(c *fiber.Ctx) error {
+func PurchaseDelete(c fiber.Ctx) error {
 	purchase := new(models.Purchase)
 
 	id := c.Params("id")

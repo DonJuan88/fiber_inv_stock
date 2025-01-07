@@ -8,45 +8,44 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-func ImageIndex(c *fiber.Ctx) error {
+func ImageIndex(c fiber.Ctx) error {
 	var images []models.ProductImage
 
-	if res := config.DB.Debug().Find(&images); res.Error !=nil{
+	if res := config.DB.Debug().Find(&images); res.Error != nil {
 		c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"status" :"Image(s) not found",
+			"status": "Image(s) not found",
 		})
-		
+
 	}
 
-	 return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"data":images,  
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data": images,
 	})
 }
 
-func ImagePost(c *fiber.Ctx) error {
+func ImagePost(c fiber.Ctx) error {
 	image := new(models.ProductImage)
 
-	if err := c.BodyParser(image); err != nil {
+	if err := c.Bind().Body(image); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
-
-// Validate required fields
-	if 
-	image.ProductCode =="" || 
-	image.FileName =="" {
+	// Validate required fields
+	if image.ProductCode == "" ||
+		image.FileName == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
 	file, err := c.FormFile("image")
 	if err != nil {
-	return c.Status(400).JSON(fiber.Map{"error": "image upload cancelled"})}
+		return c.Status(400).JSON(fiber.Map{"error": "image upload cancelled"})
+	}
 
 	// Save file to the local file system
 	pathmaster := filepath.Dir("../uploads/")
@@ -59,50 +58,43 @@ func ImagePost(c *fiber.Ctx) error {
 		})
 	}
 
-
-	
-
 	item := models.ProductImage{
-		ID:uuid.New(),
+		ID:          uuid.New(),
 		ProductCode: image.ProductCode,
 		FileName:    filePath,
 	}
 	config.DB.Debug().Create(&item)
-	
 
-	
 	return c.JSON(fiber.Map{
 		"data": image,
-		})
-	 
+	})
+
 }
 
-
-func ImageShow(c *fiber.Ctx) error {
+func ImageShow(c fiber.Ctx) error {
 	var images []models.ProductImage
 
 	if result := config.DB.Debug().First(&images, c.Params("id")); result.Error != nil {
-  return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-   "message": "Image not found",
-  })
- }
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Image not found",
+		})
+	}
 
- return c.Status(fiber.StatusOK).JSON(fiber.Map{
-  "data": images,
- })
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data": images,
+	})
 }
 
-func ImageDelete(c *fiber.Ctx) error {
+func ImageDelete(c fiber.Ctx) error {
 	var images models.ProductImage
 
-	
- id := c.Params("id")
-_, err := uuid.Parse(id)
-if err != nil {
-    return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID format"})
-}
+	id := c.Params("id")
+	_, err := uuid.Parse(id)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID format"})
+	}
 
- config.DB.Debug().Where("id = ?", id).Delete(&images)
+	config.DB.Debug().Where("id = ?", id).Delete(&images)
 
 	var result string
 	config.DB.Raw("select file_name from item_images Where id= ? ", id).Scan(&result)
@@ -114,8 +106,8 @@ if err != nil {
 
 	config.DB.Delete(&images)
 
- return c.Status(fiber.StatusOK).JSON(fiber.Map{
-  "message": "Image deleted",
- })
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Image deleted",
+	})
 
 }

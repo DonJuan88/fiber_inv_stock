@@ -5,11 +5,11 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-func MessageShow(c *fiber.Ctx) error {
+func MessageShow(c fiber.Ctx) error {
 	var messages []*models.Message
 
 	if result := config.DB.Debug().First(&messages, c.Params("id")); result.Error != nil {
@@ -24,43 +24,41 @@ func MessageShow(c *fiber.Ctx) error {
 
 }
 
-func MessageCreate(c *fiber.Ctx) error {
+func MessageCreate(c fiber.Ctx) error {
 	message := new(models.Message)
 
-	if err := c.BodyParser(message); err != nil {
+	if err := c.Bind().Body(message); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
 	// Validate required fields
-	if 
-	message.Name == "" ||
-	message.EmailPhone          == "" ||
-	message.MyMessage == "" ||
-	!message.ReadingStatus {
-		
+	if message.Name == "" ||
+		message.EmailPhone == "" ||
+		message.MyMessage == "" ||
+		!message.ReadingStatus {
+
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
-
 
 	// Validation
 	validate := validator.New()
 	errValidate := validate.Struct(message)
 	if errValidate != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"data": "failed to validate",
-			"error":   errValidate.Error(),
+			"data":  "failed to validate",
+			"error": errValidate.Error(),
 		})
 	}
 
 	newmessage := models.Message{
 
-		ID: uuid.New(),
-	Name          : message.Name,
-	EmailPhone    : message.EmailPhone,
-	MyMessage     : message.MyMessage,
-	ReadingStatus :message.ReadingStatus,
+		ID:            uuid.New(),
+		Name:          message.Name,
+		EmailPhone:    message.EmailPhone,
+		MyMessage:     message.MyMessage,
+		ReadingStatus: message.ReadingStatus,
 	}
 	config.DB.Debug().Create(&newmessage)
 
@@ -69,8 +67,7 @@ func MessageCreate(c *fiber.Ctx) error {
 	})
 }
 
-
-func MessageDelete(c *fiber.Ctx) error {
+func MessageDelete(c fiber.Ctx) error {
 	message := new(models.Message)
 
 	id := c.Params("id")
@@ -86,7 +83,7 @@ func MessageDelete(c *fiber.Ctx) error {
 	})
 }
 
-/* func messageearch(c *fiber.Ctx) error {
+/* func messageearch(c fiber.Ctx) error {
 	query := c.Query("q")
 
 	// Respond with the query parameter

@@ -5,11 +5,11 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-func TransferIndex(c *fiber.Ctx) error {
+func TransferIndex(c fiber.Ctx) error {
 	var transfers []*models.Transfer
 
 	if res := config.DB.Debug().Find(&transfers); res.Error != nil {
@@ -24,7 +24,7 @@ func TransferIndex(c *fiber.Ctx) error {
 	})
 }
 
-func TransferShow(c *fiber.Ctx) error {
+func TransferShow(c fiber.Ctx) error {
 	var transfer []*models.Transfer
 
 	if result := config.DB.Debug().First(&transfer, c.Params("id")); result.Error != nil {
@@ -39,29 +39,27 @@ func TransferShow(c *fiber.Ctx) error {
 
 }
 
-func TransferCreate(c *fiber.Ctx) error {
+func TransferCreate(c fiber.Ctx) error {
 	transfer := new(models.Transfer)
 
-	if err := c.BodyParser(transfer); err != nil {
+	if err := c.Bind().Body(transfer); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
 	// Validate required fields
-	if 
-	transfer.TransferNo    == "" || 
-	transfer.TransferDate.GoString()  == "" || 
-	transfer.BranchOrigin    == "" || 
-	transfer.BranchDestiny     == "" || 
-	transfer.Notes     == "" || 
-	transfer.UserId   == "" || 
-	transfer.Cost    <0 || 
-	transfer.Reference     == ""      {
+	if transfer.TransferNo == "" ||
+		transfer.TransferDate.GoString() == "" ||
+		transfer.BranchOrigin == "" ||
+		transfer.BranchDestiny == "" ||
+		transfer.Notes == "" ||
+		transfer.UserId == "" ||
+		transfer.Cost < 0 ||
+		transfer.Reference == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
-	
 	// Validation
 	validate := validator.New()
 	errValidate := validate.Struct(transfer)
@@ -73,16 +71,16 @@ func TransferCreate(c *fiber.Ctx) error {
 
 	newtransfer := models.Transfer{
 
-		ID:                 uuid.New(),
-	TransferNo    : transfer.TransferNo,            
-	TransferDate :  transfer.TransferDate, 
-	BranchOrigin  : transfer.BranchOrigin,  
-	BranchDestiny : transfer.BranchDestiny,  
-	Reference     : transfer.Reference,      
-	Notes         : transfer.Notes   ,        
-	UserId        : transfer.UserId   ,       
-	Cost          : transfer.Cost      ,      
-	}             
+		ID:            uuid.New(),
+		TransferNo:    transfer.TransferNo,
+		TransferDate:  transfer.TransferDate,
+		BranchOrigin:  transfer.BranchOrigin,
+		BranchDestiny: transfer.BranchDestiny,
+		Reference:     transfer.Reference,
+		Notes:         transfer.Notes,
+		UserId:        transfer.UserId,
+		Cost:          transfer.Cost,
+	}
 
 	config.DB.Debug().Create(&newtransfer)
 
@@ -91,10 +89,10 @@ func TransferCreate(c *fiber.Ctx) error {
 	})
 }
 
-func TransferUpdate(c *fiber.Ctx) error {
+func TransferUpdate(c fiber.Ctx) error {
 	transfer := new(models.Transfer)
 
-	if err := c.BodyParser(transfer); err != nil {
+	if err := c.Bind().Body(transfer); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
@@ -109,34 +107,32 @@ func TransferUpdate(c *fiber.Ctx) error {
 	}
 
 	// Validate required fields
-	if 
-
-	transfer.TransferNo    == "" || 
-	transfer.TransferDate.GoString()  == "" || 
-	transfer.BranchOrigin    == "" || 
-	transfer.BranchDestiny     == "" || 
-	transfer.Notes         == "" || 
-	transfer.UserId         == "" || 
-	transfer.Cost          <0 || 
-	transfer.Reference      == ""  {
+	if transfer.TransferNo == "" ||
+		transfer.TransferDate.GoString() == "" ||
+		transfer.BranchOrigin == "" ||
+		transfer.BranchDestiny == "" ||
+		transfer.Notes == "" ||
+		transfer.UserId == "" ||
+		transfer.Cost < 0 ||
+		transfer.Reference == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
 	config.DB.Debug().Model(&models.Transfer{}).Where("id = ?", id).Updates(map[string]interface{}{
-	"transfer_no"    : transfer.TransferNo   , 
-	"transfer_date" : transfer.TransferDate ,   
-	"branch_origin"  : transfer.BranchOrigin , 
-	"branch_destiny" : transfer.BranchDestiny,  
-	"reference"      : transfer.Reference    ,    
-	"notes"          : transfer.Notes        ,
-	"user_id"        : transfer.UserId       ,
-	"cost"           : transfer.Cost         ,	})
+		"transfer_no":    transfer.TransferNo,
+		"transfer_date":  transfer.TransferDate,
+		"branch_origin":  transfer.BranchOrigin,
+		"branch_destiny": transfer.BranchDestiny,
+		"reference":      transfer.Reference,
+		"notes":          transfer.Notes,
+		"user_id":        transfer.UserId,
+		"cost":           transfer.Cost})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": transfer,
 	})
 }
 
-func TransferDelete(c *fiber.Ctx) error {
+func TransferDelete(c fiber.Ctx) error {
 	transfer := new(models.Transfer)
 
 	id := c.Params("id")

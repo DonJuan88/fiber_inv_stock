@@ -6,12 +6,11 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-
-func UserIndex(c *fiber.Ctx) error {
+func UserIndex(c fiber.Ctx) error {
 	var users []*models.User
 
 	if res := config.DB.Debug().Find(&users); res.Error != nil {
@@ -25,7 +24,7 @@ func UserIndex(c *fiber.Ctx) error {
 		"data": users,
 	})
 }
-func UserShow(c *fiber.Ctx) error {
+func UserShow(c fiber.Ctx) error {
 	var user []*models.User
 
 	if result := config.DB.Debug().First(&user, c.Params("id")); result.Error != nil {
@@ -40,28 +39,24 @@ func UserShow(c *fiber.Ctx) error {
 
 }
 
-func UserCreate(c *fiber.Ctx) error {
+func UserCreate(c fiber.Ctx) error {
 	user := new(models.User)
 
-	if err := c.BodyParser(user); err != nil {
+	if err := c.Bind().Body(user); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
 	// Validate required fields
-	if 
-	user.FirstName == "" ||
-	user.LastName  == "" ||
-	user.Email     == "" ||
-	user.Password  == "" ||
-	!user.IsAdmin    {
-		
+	if user.FirstName == "" ||
+		user.LastName == "" ||
+		user.Email == "" ||
+		user.Password == "" ||
+		!user.IsAdmin {
+
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
-
-
-	
 
 	// Validation
 	validate := validator.New()
@@ -76,12 +71,12 @@ func UserCreate(c *fiber.Ctx) error {
 	newuser := models.User{
 
 		ID: uuid.New(),
-		
-	FirstName : user.FirstName,
-	LastName  : user.LastName ,
-	Email     : user.Email    ,
-	Password  : user.Password ,
-	IsAdmin   : user.IsAdmin  ,	}
+
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Password:  user.Password,
+		IsAdmin:   user.IsAdmin}
 	config.DB.Debug().Create(&newuser)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -89,10 +84,10 @@ func UserCreate(c *fiber.Ctx) error {
 	})
 }
 
-func UserUpdate(c *fiber.Ctx) error {
+func UserUpdate(c fiber.Ctx) error {
 	user := new(models.User)
 
-	if err := c.BodyParser(user); err != nil {
+	if err := c.Bind().Body(user); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
@@ -105,31 +100,29 @@ func UserUpdate(c *fiber.Ctx) error {
 	}
 
 	// Validate required fields
-	if 
-	
-	user.FirstName == "" ||
-	user.LastName  == "" ||
-	user.Email     == "" ||
-	user.Password  == "" ||
-	!user.IsAdmin    {
-		
+	if user.FirstName == "" ||
+		user.LastName == "" ||
+		user.Email == "" ||
+		user.Password == "" ||
+		!user.IsAdmin {
+
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
 	config.DB.Debug().Model(&models.User{}).Where("id = ?", id).Updates(map[string]interface{}{
-	 "firstname" :user.FirstName,    
-	 "lastname"  :user.LastName ,   
-	 "email"     :user.Email    , 
-	 "password"  :user.Password , 
-	 "admin"     :user.IsAdmin  ,  
-	 "active"    :user.Active   ,
+		"firstname": user.FirstName,
+		"lastname":  user.LastName,
+		"email":     user.Email,
+		"password":  user.Password,
+		"admin":     user.IsAdmin,
+		"active":    user.Active,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": user,
 	})
 }
 
-func UserDelete(c *fiber.Ctx) error {
+func UserDelete(c fiber.Ctx) error {
 	user := new(models.User)
 
 	id := c.Params("id")
@@ -145,7 +138,7 @@ func UserDelete(c *fiber.Ctx) error {
 	})
 }
 
-/* func Userearch(c *fiber.Ctx) error {
+/* func Userearch(c fiber.Ctx) error {
 	query := c.Query("q")
 
 	// Respond with the query parameter

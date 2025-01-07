@@ -5,11 +5,11 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-func NotificationIndex(c *fiber.Ctx) error {
+func NotificationIndex(c fiber.Ctx) error {
 	var notifications []*models.Notification
 
 	if res := config.DB.Debug().Find(&notifications); res.Error != nil {
@@ -24,7 +24,7 @@ func NotificationIndex(c *fiber.Ctx) error {
 	})
 }
 
-func NotificationShow(c *fiber.Ctx) error {
+func NotificationShow(c fiber.Ctx) error {
 	var notification []*models.Notification
 
 	if result := config.DB.Debug().First(&notification, c.Params("id")); result.Error != nil {
@@ -39,23 +39,21 @@ func NotificationShow(c *fiber.Ctx) error {
 
 }
 
-func NotificationCreate(c *fiber.Ctx) error {
+func NotificationCreate(c fiber.Ctx) error {
 	notification := new(models.Notification)
 
-	if err := c.BodyParser(notification); err != nil {
+	if err := c.Bind().Body(notification); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
 	// Validate required fields
-	if 	notification.NotifId == "" ||
-		notification.UserID == ""  ||
-	 	notification.NotifMessage == "" {
+	if notification.NotifId == "" ||
+		notification.UserID == "" ||
+		notification.NotifMessage == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
-
-	
 
 	// Validation
 	validate := validator.New()
@@ -69,9 +67,9 @@ func NotificationCreate(c *fiber.Ctx) error {
 
 	newNotification := models.Notification{
 
-		ID:          uuid.New(),
-		NotifId: notification.NotifId,
-		UserID: notification.UserID,
+		ID:           uuid.New(),
+		NotifId:      notification.NotifId,
+		UserID:       notification.UserID,
 		NotifMessage: notification.NotifMessage,
 	}
 	config.DB.Debug().Create(&newNotification)
@@ -81,16 +79,15 @@ func NotificationCreate(c *fiber.Ctx) error {
 	})
 }
 
-func NotificationUpdate(c *fiber.Ctx) error {
+func NotificationUpdate(c fiber.Ctx) error {
 	notification := new(models.Notification)
 
-	if err := c.BodyParser(notification); err != nil {
+	if err := c.Bind().Body(notification); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
-	
 	id := c.Params("id")
 	_, err := uuid.Parse(id)
 	if err != nil {
@@ -98,25 +95,23 @@ func NotificationUpdate(c *fiber.Ctx) error {
 	}
 
 	// Validate required fields
-if 	notification.NotifId == "" ||
-		notification.UserID == ""  ||
-	 	notification.NotifMessage == "" {
+	if notification.NotifId == "" ||
+		notification.UserID == "" ||
+		notification.NotifMessage == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
-	
-
 	config.DB.Debug().Model(&models.Notification{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"notif_id" : notification.NotifId,
-		"user_id": notification.UserID,
-		"notif_message" : notification.NotifMessage,
+		"notif_id":      notification.NotifId,
+		"user_id":       notification.UserID,
+		"notif_message": notification.NotifMessage,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": notification,
 	})
 }
 
-func NotificationDelete(c *fiber.Ctx) error {
+func NotificationDelete(c fiber.Ctx) error {
 	notification := new(models.Notification)
 
 	id := c.Params("id")
@@ -132,7 +127,7 @@ func NotificationDelete(c *fiber.Ctx) error {
 	})
 }
 
-/* func notificationSearch(c *fiber.Ctx) error {
+/* func notificationSearch(c fiber.Ctx) error {
 	query := c.Query("q")
 
 	// Respond with the query parameter

@@ -6,11 +6,11 @@ import (
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
-func BrandIndex(c *fiber.Ctx) error {
+func BrandIndex(c fiber.Ctx) error {
 	var brands []*models.Brands
 
 	if res := config.DB.Debug().Find(&brands); res.Error != nil {
@@ -25,7 +25,7 @@ func BrandIndex(c *fiber.Ctx) error {
 	})
 }
 
-func BrandShow(c *fiber.Ctx) error {
+func BrandShow(c fiber.Ctx) error {
 	var brand []*models.Brands
 
 	if result := config.DB.Debug().First(&brand, c.Params("id")); result.Error != nil {
@@ -40,18 +40,18 @@ func BrandShow(c *fiber.Ctx) error {
 
 }
 
-func BrandCreate(c *fiber.Ctx) error {
+func BrandCreate(c fiber.Ctx) error {
 	brand := new(models.Brands)
 
-	if err := c.BodyParser(brand); err != nil {
+	if err := c.Bind().Body(brand); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
 	// Validate required fields
-	if 	brand.BrandCode == "" ||
-		brand.BrandName == ""  {
+	if brand.BrandCode == "" ||
+		brand.BrandName == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
@@ -59,19 +59,16 @@ func BrandCreate(c *fiber.Ctx) error {
 	exists, err := helper.CheckBrandExists(config.DB, brand.BrandCode)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-   "message": "failed to validate",
-   "error":  err,
-  })
-	}
-
-	
-	if exists {
-		return c.Status(400).JSON(fiber.Map{
-	   "message": "branch Code already registered",
-
+			"message": "failed to validate",
+			"error":   err,
 		})
 	}
 
+	if exists {
+		return c.Status(400).JSON(fiber.Map{
+			"message": "branch Code already registered",
+		})
+	}
 
 	// Validation
 	validate := validator.New()
@@ -85,28 +82,26 @@ func BrandCreate(c *fiber.Ctx) error {
 
 	newBrand := models.Brands{
 
-		ID:          uuid.New(),
-		BrandCode:  brand.BrandCode,
+		ID:        uuid.New(),
+		BrandCode: brand.BrandCode,
 		BrandName: brand.BrandName,
 	}
 	config.DB.Debug().Create(&newBrand)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": brand,
-		
 	})
 }
 
-func BrandUpdate(c *fiber.Ctx) error {
+func BrandUpdate(c fiber.Ctx) error {
 	brand := new(models.Brands)
 
-	if err := c.BodyParser(brand); err != nil {
+	if err := c.Bind().Body(brand); err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"error": "Field incomplete",
 		})
 	}
 
-	
 	id := c.Params("id")
 	_, err := uuid.Parse(id)
 	if err != nil {
@@ -114,22 +109,21 @@ func BrandUpdate(c *fiber.Ctx) error {
 	}
 
 	// Validate required fields
-	if 	brand.BrandCode == "" ||
-		brand.BrandName == ""  {
+	if brand.BrandCode == "" ||
+		brand.BrandName == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
-	
 
 	config.DB.Debug().Model(&models.Brands{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"brand_code" : brand.BrandCode,
-		"brand_name" : brand.BrandName,
+		"brand_code": brand.BrandCode,
+		"brand_name": brand.BrandName,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": brand,
 	})
 }
 
-func BrandDelete(c *fiber.Ctx) error {
+func BrandDelete(c fiber.Ctx) error {
 	brands := new(models.Brands)
 
 	id := c.Params("id")
@@ -145,7 +139,7 @@ func BrandDelete(c *fiber.Ctx) error {
 	})
 }
 
-/* func BrandSearch(c *fiber.Ctx) error {
+/* func BrandSearch(c fiber.Ctx) error {
 	query := c.Query("q")
 
 	// Respond with the query parameter

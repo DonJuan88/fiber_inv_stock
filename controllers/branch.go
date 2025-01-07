@@ -22,23 +22,23 @@ func BranchIndex(c *fiber.Ctx) error {
 	}
 
 	 return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"branchs":branchs,  
+		"data":branchs,  
 	})
 }
 
 func BranchShow(c *fiber.Ctx) error {
- var branchs []*models.Branch
+ var branch []*models.Branch
 
  
 
- if result := config.DB.Debug().First(&branchs, c.Params("id")); result.Error != nil {
+ if result := config.DB.Debug().First(&branch, c.Params("id")); result.Error != nil {
   return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
    "message": "Branch not found",
   })
  }
 
  return c.Status(fiber.StatusOK).JSON(fiber.Map{
-  "branch": branchs,
+  "data": branch,
  })
 
 }
@@ -138,6 +138,18 @@ if err != nil {
     return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID format"})
 }
 
+
+ // Validate required fields
+	if 	 branch.BranchCode =="" ||
+	branch.BranchName =="" ||
+	branch.BranchAddress =="" ||
+	branch.ContactPerson =="" ||
+	branch.ContactPersonPhone =="" ||
+	branch.Phone =="" {
+		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
+	}
+
+
  config.DB.Debug().Model(&models.Branch{}).Where("id = ?", id).Updates(map[string]interface{}{
  	"branch_code": branch.BranchCode,
 	"branch_name": branch.BranchName,
@@ -148,12 +160,12 @@ if err != nil {
 	"active" : branch.Active,
  })
  return c.Status(fiber.StatusOK).JSON(fiber.Map{
-  "message": "succes update user",
+  "data": branch,
  })
 }
 
 func BranchDelete(c *fiber.Ctx) error {
- branchs := new(models.Branch)
+ branch := new(models.Branch)
 
  id := c.Params("id")
 _, err := uuid.Parse(id)
@@ -161,7 +173,7 @@ if err != nil {
     return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID format"})
 }
 
- config.DB.Debug().Where("id = ?", id).Delete(&branchs)
+ config.DB.Debug().Where("id = ?", id).Delete(&branch)
 
  return c.Status(fiber.StatusOK).JSON(fiber.Map{
   "message": "delete branch successfully",

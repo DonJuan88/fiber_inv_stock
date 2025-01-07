@@ -13,7 +13,7 @@ type BranchStockPrice struct {
 	ProductCode string `json:"code"`
 	Barcode1    string `json:"barcode1"`
 	Barcode2    string `json:"barcode2"`
-	BaasePrice       int64  `json:"price"`
+	BasePrice       int64  `json:"baseprice"`
 	SalePrice int64 `json:"saleprice"`
 	Stock       int64  `json:"stock"`
 	MinStock int64 `json:"min_stock"`

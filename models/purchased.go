@@ -8,7 +8,7 @@ import (
 )
 
 type PurchaseDetail struct {
-ID			uuid.UUID     `json:"id" gorm:"primaryKey"`
+	ID			uuid.UUID     `json:"id" gorm:"primaryKey"`
 	PurchaseNo    string    `json:"purchase_no"`
 	PurchaseDate  time.Time `json:"purchase_date"`
 	ItemCode      string    `json:"code"`

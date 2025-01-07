@@ -11,6 +11,7 @@ type Transfer struct {
 
 	ID			uuid.UUID     `json:"id" gorm:"primaryKey"`
 	TransferNo    string `json:"transfer_no"`
+	TransferDate time.Time `json:"transfer_date"`
 	BranchOrigin  string `json:"branch_origin"`
 	BranchDestiny string `json:"branch_destiny"`
 	Reference     string `json:"reference"`

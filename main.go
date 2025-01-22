@@ -49,7 +49,6 @@ func main() {
 	// Register rute modular
 	//routes.AccountUserRoutes(v1) // Anda bisa menambahkan fungsi ini di file routes/account_user_routes.go
 	routes.BranchRoutes(v1)
-	routes.BranchRoutes(v1)
 	routes.BrandRoutes(v1)
 	routes.CategoryRoutes(v1)
 	routes.CompanyRoutes(v1)
@@ -66,7 +65,7 @@ func main() {
 	routes.TransferDetailRoutes(v1)
 	routes.TransferRoutes(v1)
 	routes.UserRoutes(api)
-	//	routes.BrandRoutes(v1) // And
+	routes.BrandRoutes(v1) // And
 
 	app.Listen(":3000")
 }

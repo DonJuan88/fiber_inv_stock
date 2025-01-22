@@ -34,7 +34,7 @@ func dbMigrate() {
 
 	DB.AutoMigrate(
 		models.Branch{},
-		models.BranchStockPrice{},
+		models.BranchStock{},
 		models.Brands{},
 		models.Categories{},
 		models.Company{},

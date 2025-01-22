@@ -52,9 +52,9 @@ func PurchaseDetailCreate(c fiber.Ctx) error {
 	// Validate required fields
 	if purchaseDetail.PurchaseNo == "" ||
 		purchaseDetail.PurchaseDate.GoString() == "" ||
-		purchaseDetail.ItemCode == "" ||
+		purchaseDetail.ProductCode == "" ||
 		purchaseDetail.Qty < 0 ||
-		purchaseDetail.BasePrice < 0 ||
+		purchaseDetail.Price < 0 ||
 		purchaseDetail.Discount < 0 ||
 		purchaseDetail.PurchasePrice < 0 {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
@@ -74,9 +74,9 @@ func PurchaseDetailCreate(c fiber.Ctx) error {
 		ID:            uuid.New(),
 		PurchaseNo:    purchaseDetail.PurchaseNo,
 		PurchaseDate:  purchaseDetail.PurchaseDate,
-		ItemCode:      purchaseDetail.ItemCode,
+		ProductCode:   purchaseDetail.ProductCode,
 		Qty:           purchaseDetail.Qty,
-		BasePrice:     purchaseDetail.BasePrice,
+		Price:         purchaseDetail.Price,
 		Discount:      purchaseDetail.Discount,
 		PurchasePrice: purchaseDetail.PurchasePrice}
 	config.DB.Debug().Create(&newpurchaseDetail)
@@ -106,9 +106,9 @@ func PurchaseDetailUpdate(c fiber.Ctx) error {
 	// Validate required fields
 	if purchaseDetail.PurchaseNo == "" ||
 		purchaseDetail.PurchaseDate.GoString() == "" ||
-		purchaseDetail.ItemCode == "" ||
+		purchaseDetail.ProductCode == "" ||
 		purchaseDetail.Qty < 0 ||
-		purchaseDetail.BasePrice < 0 ||
+		purchaseDetail.Price < 0 ||
 		purchaseDetail.Discount < 0 ||
 		purchaseDetail.PurchasePrice < 0 {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
@@ -117,9 +117,9 @@ func PurchaseDetailUpdate(c fiber.Ctx) error {
 	config.DB.Debug().Model(&models.PurchaseDetail{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"purchase_no":   purchaseDetail.PurchaseNo,
 		"purchase_date": purchaseDetail.PurchaseDate,
-		"code":          purchaseDetail.ItemCode,
+		"product_code":  purchaseDetail.ProductCode,
 		"qty":           purchaseDetail.Qty,
-		"baseprice":     purchaseDetail.BasePrice,
+		"baseprice":     purchaseDetail.Price,
 		"discount":      purchaseDetail.Discount,
 		"purchaseprice": purchaseDetail.PurchasePrice})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{

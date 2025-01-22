@@ -49,7 +49,7 @@ func SupplierCreate(c fiber.Ctx) error {
 	}
 
 	// Validate required fields
-	if supplier.Code == "" ||
+	if supplier.SupplierID == "" ||
 		supplier.Name == "" ||
 		supplier.ContactPerson == "" ||
 		supplier.Email == "" ||
@@ -64,7 +64,7 @@ func SupplierCreate(c fiber.Ctx) error {
 	}
 
 	// Check if supplier exists
-	exists, err := helper.CheckSupplierExists(config.DB, supplier.Code)
+	exists, err := helper.CheckSupplierExists(config.DB, supplier.SupplierID)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"message": "failed to validate",
@@ -91,7 +91,7 @@ func SupplierCreate(c fiber.Ctx) error {
 	newsupplier := models.Supplier{
 
 		ID:            uuid.New(),
-		Code:          supplier.Code,
+		SupplierID:    supplier.SupplierID,
 		Name:          supplier.Name,
 		ContactPerson: supplier.ContactPerson,
 		Email:         supplier.Email,
@@ -125,7 +125,7 @@ func SupplierUpdate(c fiber.Ctx) error {
 	}
 
 	// Validate required fields
-	if supplier.Code == "" ||
+	if supplier.SupplierID == "" ||
 		supplier.Name == "" ||
 		supplier.ContactPerson == "" ||
 		supplier.Email == "" ||
@@ -139,7 +139,7 @@ func SupplierUpdate(c fiber.Ctx) error {
 	}
 
 	config.DB.Debug().Model(&models.Supplier{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"code":       supplier.Code,
+		"code":       supplier.SupplierID,
 		"name":       supplier.Name,
 		"cp":         supplier.ContactPerson,
 		"email":      supplier.Email,

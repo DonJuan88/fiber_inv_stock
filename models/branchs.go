@@ -16,6 +16,7 @@ type Branch struct {
 	ContactPersonPhone string         `json:"contact_person_phone"`
 	Phone              string         `json:"phone"`
 	Active             bool           `json:"active"  gorm:"default:true"`
+	Comment            string         `json:"comment" `
 	CreatedAt          time.Time      `json:"created_at"`
 	UpdatedAt          time.Time      `json:"updated_at"`
 	DeletedAt          gorm.DeletedAt `json:"deleted_at" gorm:"index"`

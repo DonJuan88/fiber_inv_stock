@@ -51,12 +51,12 @@ func SaleCreate(c fiber.Ctx) error {
 	// Validate required fields
 	if sale.SaleNo == "" ||
 		sale.SaleDate.GoString() == "" ||
-		sale.Customer == "" ||
+		sale.CustomerID == "" ||
 		sale.ShippingCost < 0 ||
 		sale.Tax1 < 0 ||
 		sale.Tax2 < 0 ||
 		sale.Total < 0 ||
-		sale.AccountID == "" ||
+		sale.UserID == "" ||
 		sale.PaymentType == "" ||
 		sale.Reference == "" ||
 		sale.Notes == "" {
@@ -77,12 +77,12 @@ func SaleCreate(c fiber.Ctx) error {
 		ID:            uuid.New(),
 		SaleNo:        sale.SaleNo,
 		SaleDate:      sale.SaleDate,
-		Customer:      sale.Customer,
+		CustomerID:    sale.CustomerID,
 		ShippingCost:  sale.ShippingCost,
 		Tax1:          sale.Tax1,
 		Tax2:          sale.Tax2,
 		Total:         sale.Total,
-		AccountID:     sale.AccountID,
+		UserID:        sale.UserID,
 		PaymentType:   sale.PaymentType,
 		Reference:     sale.Reference,
 		Notes:         sale.Notes,
@@ -116,12 +116,12 @@ func SaleUpdate(c fiber.Ctx) error {
 	// Validate required fields
 	if sale.SaleNo == "" ||
 		sale.SaleDate.GoString() == "" ||
-		sale.Customer == "" ||
+		sale.CustomerID == "" ||
 		sale.ShippingCost < 0 ||
 		sale.Tax1 < 0 ||
 		sale.Tax2 < 0 ||
 		sale.Total < 0 ||
-		sale.AccountID == "" ||
+		sale.UserID == "" ||
 		sale.PaymentType == "" ||
 		sale.Reference == "" ||
 		sale.Notes == "" {
@@ -131,12 +131,12 @@ func SaleUpdate(c fiber.Ctx) error {
 	config.DB.Debug().Model(&models.Sale{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"sale_no":       sale.SaleNo,
 		"sale_date":     sale.SaleDate,
-		"customer":      sale.Customer,
+		"customer_id":   sale.CustomerID,
 		"shippingprice": sale.ShippingCost,
 		"tax1":          sale.Tax1,
 		"tax2":          sale.Tax2,
 		"total":         sale.Total,
-		"accid":         sale.AccountID,
+		"user_id":       sale.UserID,
 		"paymenttype":   sale.PaymentType,
 		"reference":     sale.Reference,
 		"notes":         sale.Notes,

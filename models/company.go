@@ -9,7 +9,7 @@ import (
 
 type Company struct {
 	ID                 uuid.UUID      `json:"id" gorm:"primaryKey"`
-	Name               string         `json:"name"`
+	Name               string         `json:"company_name"`
 	ContactPerson      string         `json:"cp"`
 	ContactPersonPhone string         `json:"cp_phone"`
 	Email              string         `json:"email"`

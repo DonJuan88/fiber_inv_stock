@@ -9,7 +9,7 @@ import (
 
 type ProductImage struct {
 	ID          uuid.UUID      `json:"id" gorm:"primaryKey"`
-	ProductCode string         `json:"product_code"`
+	ProductCode string         `json:"product_code" gorm:"foreignKey:ProductCode"`
 	FileName    string         `json:"product_image"`
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`

@@ -10,7 +10,7 @@ import (
 )
 
 func BranchStockIndex(c fiber.Ctx) error {
-	var branchStocks []*models.BranchStockPrice
+	var branchStocks []*models.BranchStock
 
 	if res := config.DB.Debug().Find(&branchStocks); res.Error != nil {
 		c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -25,7 +25,7 @@ func BranchStockIndex(c fiber.Ctx) error {
 }
 
 func BranchStockShowAll(c fiber.Ctx) error {
-	var branchStocks []*models.BranchStockPrice
+	var branchStocks []*models.BranchStock
 
 	if result := config.DB.Debug().First(&branchStocks, c.Params("id")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -40,7 +40,7 @@ func BranchStockShowAll(c fiber.Ctx) error {
 }
 
 func BranchStockShowStore(c fiber.Ctx) error {
-	var branchStocks []*models.BranchStockPrice
+	var branchStocks []*models.BranchStock
 
 	if result := config.DB.Debug().First(&branchStocks, "branch_code=?", c.Params("branch_code")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -55,7 +55,7 @@ func BranchStockShowStore(c fiber.Ctx) error {
 }
 
 func BranchStockCreate(c fiber.Ctx) error {
-	branchStock := new(models.BranchStockPrice)
+	branchStock := new(models.BranchStock)
 
 	if err := c.Bind().Body(branchStock); err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -66,10 +66,6 @@ func BranchStockCreate(c fiber.Ctx) error {
 	// Validate required fields
 	if branchStock.BranchCode == "" ||
 		branchStock.ProductCode == "" ||
-		branchStock.Barcode1 == "" ||
-		branchStock.Barcode2 == "" ||
-		branchStock.BasePrice <= 0 ||
-		branchStock.SalePrice <= 0 ||
 		branchStock.Stock <= 0 ||
 		branchStock.MinStock <= 0 {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
@@ -87,15 +83,11 @@ func BranchStockCreate(c fiber.Ctx) error {
 		})
 	}
 
-	newBranchStock := models.BranchStockPrice{
+	newBranchStock := models.BranchStock{
 
 		ID:          uuid.New(),
 		BranchCode:  branchStock.BranchCode,
 		ProductCode: branchStock.ProductCode,
-		Barcode1:    branchStock.Barcode1,
-		Barcode2:    branchStock.Barcode2,
-		BasePrice:   branchStock.BasePrice,
-		SalePrice:   branchStock.SalePrice,
 		Stock:       branchStock.Stock,
 		MinStock:    branchStock.MinStock,
 	}
@@ -117,7 +109,7 @@ func BranchStockCreate(c fiber.Ctx) error {
 }
 
 func BranchStockUpdate(c fiber.Ctx) error {
-	branchStock := new(models.BranchStockPrice)
+	branchStock := new(models.BranchStock)
 
 	if err := c.Bind().Body(branchStock); err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -133,13 +125,9 @@ func BranchStockUpdate(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID format"})
 	}
 
-	config.DB.Debug().Model(&models.BranchStockPrice{}).Where("id = ?", id).Updates(map[string]interface{}{
+	config.DB.Debug().Model(&models.BranchStock{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"branch_code": branchStock.BranchCode,
 		"code":        branchStock.ProductCode,
-		"barcode1":    branchStock.Barcode1,
-		"barcode2":    branchStock.Barcode2,
-		"baseprice":   branchStock.BasePrice,
-		"saleprice":   branchStock.SalePrice,
 		"stock":       branchStock.Stock,
 		"min_stock":   branchStock.MinStock,
 	})

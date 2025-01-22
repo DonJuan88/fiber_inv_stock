@@ -52,7 +52,7 @@ func SaleDetailCreate(c fiber.Ctx) error {
 	// Validate required fields
 	if saleDetail.SaleNo == "" ||
 		saleDetail.SaleDate.GoString() == "" ||
-		saleDetail.ItemCode == "" ||
+		saleDetail.ProductCode == "" ||
 		saleDetail.Qty < 0 ||
 		saleDetail.Price < 0 ||
 		saleDetail.Discount < 0 ||
@@ -71,14 +71,14 @@ func SaleDetailCreate(c fiber.Ctx) error {
 
 	newsaleDetail := models.SaleDetail{
 
-		ID:        uuid.New(),
-		SaleNo:    saleDetail.SaleNo,
-		SaleDate:  saleDetail.SaleDate,
-		ItemCode:  saleDetail.ItemCode,
-		Qty:       saleDetail.Qty,
-		Price:     saleDetail.Price,
-		Discount:  saleDetail.Discount,
-		SalePrice: saleDetail.SalePrice}
+		ID:          uuid.New(),
+		SaleNo:      saleDetail.SaleNo,
+		SaleDate:    saleDetail.SaleDate,
+		ProductCode: saleDetail.ProductCode,
+		Qty:         saleDetail.Qty,
+		Price:       saleDetail.Price,
+		Discount:    saleDetail.Discount,
+		SalePrice:   saleDetail.SalePrice}
 	config.DB.Debug().Create(&newsaleDetail)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -105,8 +105,7 @@ func SaleDetailUpdate(c fiber.Ctx) error {
 
 	// Validate required fields
 	if saleDetail.SaleNo == "" ||
-		saleDetail.SaleDate.GoString() == "" ||
-		saleDetail.ItemCode == "" ||
+		saleDetail.ProductCode == "" ||
 		saleDetail.Qty < 0 ||
 		saleDetail.Price < 0 ||
 		saleDetail.Discount < 0 ||
@@ -115,13 +114,13 @@ func SaleDetailUpdate(c fiber.Ctx) error {
 	}
 
 	config.DB.Debug().Model(&models.SaleDetail{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"sale_no":   saleDetail.SaleNo,
-		"sale_date": saleDetail.SaleDate,
-		"code":      saleDetail.ItemCode,
-		"qty":       saleDetail.Qty,
-		"baseprice": saleDetail.Price,
-		"discount":  saleDetail.Discount,
-		"saleprice": saleDetail.SalePrice})
+		"sale_no":      saleDetail.SaleNo,
+		"sale_date":    saleDetail.SaleDate,
+		"product_code": saleDetail.ProductCode,
+		"qty":          saleDetail.Qty,
+		"baseprice":    saleDetail.Price,
+		"discount":     saleDetail.Discount,
+		"saleprice":    saleDetail.SalePrice})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": saleDetail,
 	})

@@ -9,7 +9,7 @@ import (
 // check double code
 func CheckProductExists(db *gorm.DB, code string) (bool, error) {
 	var product models.Product
-	result := db.Where("code = ?", code).First(&product)
+	result := db.Where("product_code = ?", code).First(&product)
 
 	// If record found, return true
 	if result.RowsAffected > 0 {

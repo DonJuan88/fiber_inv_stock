@@ -5,18 +5,39 @@ import (
 	"inv_fiber/routes"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
 func main() {
 	config.LoadConfig()
 	config.DatabaseConnection()
 
-	app := fiber.New(fiber.Config{
-		CaseSensitive: true,
-		StrictRouting: true,
-		ServerHeader:  "Fiber",
-		AppName:       "Inventory API with fiber",
-	})
+	app := fiber.New(
+	//fiber.Config{
+	//CaseSensitive: true,
+	//StrictRouting: true,
+	//ServerHeader:  "Fiber",
+	//AppName:       "Inventory API with fiber",}
+	)
+
+	app.Use(cors.New(cors.Config{
+		Next:             nil,
+		AllowOriginsFunc: nil,
+		AllowOrigins:     []string{"*"},
+		AllowMethods: []string{
+			fiber.MethodGet,
+			fiber.MethodPost,
+			fiber.MethodHead,
+			fiber.MethodPut,
+			fiber.MethodDelete,
+			fiber.MethodPatch,
+		},
+		AllowHeaders:        []string{},
+		AllowCredentials:    false,
+		ExposeHeaders:       []string{},
+		MaxAge:              0,
+		AllowPrivateNetwork: false,
+	}))
 
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.SendString("Hello, World!")
@@ -44,6 +65,7 @@ func main() {
 	routes.SupplierRoutes(v1)
 	routes.TransferDetailRoutes(v1)
 	routes.TransferRoutes(v1)
+	routes.UserRoutes(api)
 	//	routes.BrandRoutes(v1) // And
 
 	app.Listen(":3000")

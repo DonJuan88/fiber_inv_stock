@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"inv_fiber/config"
-
+	"inv_fiber/helper"
 	"inv_fiber/models"
 
 	"github.com/go-playground/validator/v10"
@@ -68,14 +68,21 @@ func UserCreate(c fiber.Ctx) error {
 		})
 	}
 
+	paswordHash, err := helper.HashPassword(user.Password)
+	if err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"message": "failed to validate",
+			"error":   err.Error(),
+		})
+	}
+
 	newuser := models.User{
 
-		ID: uuid.New(),
-
+		ID:        uuid.New(),
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
-		Password:  user.Password,
+		Password:  paswordHash,
 		IsAdmin:   user.IsAdmin}
 	config.DB.Debug().Create(&newuser)
 

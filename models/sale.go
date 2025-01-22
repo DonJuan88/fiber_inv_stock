@@ -11,12 +11,12 @@ type Sale struct {
 	ID            uuid.UUID      `json:"id" gorm:"primaryKey"`
 	SaleNo        string         `json:"sale_no"`
 	SaleDate      time.Time      `json:"sale_date"`
-	Customer      string         `json:"customer"`
-	ShippingCost  int64          `json:"shippingprice"`
+	CustomerID    string         `json:"customer_id" gorm:"foreignKey:CustomerCode"`
+	ShippingCost  int64          `json:"shipping_price"`
 	Tax1          int64          `json:"tax1"`
 	Tax2          int64          `json:"tax2"`
 	Total         int64          `json:"total"`
-	AccountID     string         `json:"accid"`
+	UserID        string         `json:"accid" gorm:"UserID"`
 	PaymentType   string         `json:"paymenttype"`
 	Reference     string         `json:"reference"`
 	Notes         string         `json:"notes"`

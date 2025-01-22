@@ -58,9 +58,7 @@ func ProductCreate(c fiber.Ctx) error {
 		product.Category == "" ||
 		product.Brand == "" ||
 		product.BasePrice < 0 ||
-		product.SalePrice1 < 0 ||
-		product.SalePrice2 < 0 ||
-		product.SalePrice3 < 0 ||
+		product.SalePrice < 0 ||
 		product.Unit == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
@@ -100,9 +98,7 @@ func ProductCreate(c fiber.Ctx) error {
 		Category:    product.Category,
 		Brand:       product.Brand,
 		BasePrice:   product.BasePrice,
-		SalePrice1:  product.SalePrice1,
-		SalePrice2:  product.SalePrice2,
-		SalePrice3:  product.SalePrice3,
+		SalePrice:   product.SalePrice,
 		Unit:        product.Unit,
 		Active:      product.Active}
 	//
@@ -148,27 +144,23 @@ func ProductUpdate(c fiber.Ctx) error {
 		product.Category == "" ||
 		product.Brand == "" ||
 		product.BasePrice < 0 ||
-		product.SalePrice1 < 0 ||
-		product.SalePrice2 < 0 ||
-		product.SalePrice3 < 0 ||
+		product.SalePrice < 0 ||
 		product.Unit == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
 	config.DB.Debug().Model(&models.Product{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"code":       product.ProductCode,
-		"barcode1":   product.Barcode1,
-		"barcode2":   product.Barcode2,
-		"name":       product.ProductName,
-		"desc":       product.Description,
-		"category":   product.Category,
-		"brand":      product.Brand,
-		"baseprice":  product.BasePrice,
-		"saleprice1": product.SalePrice1,
-		"saleprice2": product.SalePrice2,
-		"saleprice3": product.SalePrice3,
-		"unit":       product.Unit,
-		"active":     product.Active,
+		"code":      product.ProductCode,
+		"barcode1":  product.Barcode1,
+		"barcode2":  product.Barcode2,
+		"name":      product.ProductName,
+		"desc":      product.Description,
+		"category":  product.Category,
+		"brand":     product.Brand,
+		"baseprice": product.BasePrice,
+		"saleprice": product.SalePrice,
+		"unit":      product.Unit,
+		"active":    product.Active,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": product,

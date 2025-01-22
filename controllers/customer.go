@@ -49,8 +49,8 @@ func CustomerCreate(c fiber.Ctx) error {
 	}
 
 	// Validate required fields
-	if customer.Code == "" ||
-		customer.Name == "" ||
+	if customer.CustomerID == "" ||
+		customer.CustomerName == "" ||
 		customer.ContactPerson == "" ||
 		customer.Email == "" ||
 		customer.Phone == "" ||
@@ -64,7 +64,7 @@ func CustomerCreate(c fiber.Ctx) error {
 	}
 
 	// Check if customer exists
-	exists, err := helper.CheckCustomerExists(config.DB, customer.Code)
+	exists, err := helper.CheckCustomerExists(config.DB, customer.CustomerID)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
 			"message": "failed to validate",
@@ -91,8 +91,8 @@ func CustomerCreate(c fiber.Ctx) error {
 	newcustomer := models.Customer{
 
 		ID:            uuid.New(),
-		Code:          customer.Code,
-		Name:          customer.Name,
+		CustomerID:    customer.CustomerID,
+		CustomerName:  customer.CustomerName,
 		ContactPerson: customer.ContactPerson,
 		Email:         customer.Email,
 		Phone:         customer.Phone,
@@ -125,8 +125,8 @@ func CustomerUpdate(c fiber.Ctx) error {
 	}
 
 	// Validate required fields
-	if customer.Code == "" ||
-		customer.Name == "" ||
+	if customer.CustomerID == "" ||
+		customer.CustomerName == "" ||
 		customer.ContactPerson == "" ||
 		customer.Email == "" ||
 		customer.Phone == "" ||
@@ -139,8 +139,8 @@ func CustomerUpdate(c fiber.Ctx) error {
 	}
 
 	config.DB.Debug().Model(&models.Customer{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"code":       customer.Code,
-		"name":       customer.Name,
+		"code":       customer.CustomerID,
+		"name":       customer.CustomerName,
 		"cp":         customer.ContactPerson,
 		"email":      customer.Email,
 		"phone":      customer.Phone,

@@ -51,7 +51,7 @@ func TransferDetailCreate(c fiber.Ctx) error {
 
 	// Validate required fields
 	if transferDetail.TransferNo == "" ||
-		transferDetail.ItemCode == "" ||
+		transferDetail.ProductCode == "" ||
 		transferDetail.Qty < 0 {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
@@ -67,10 +67,10 @@ func TransferDetailCreate(c fiber.Ctx) error {
 
 	newtransferDetail := models.TransferDetail{
 
-		ID:         uuid.New(),
-		TransferNo: transferDetail.TransferNo,
-		ItemCode:   transferDetail.ItemCode,
-		Qty:        transferDetail.Qty,
+		ID:          uuid.New(),
+		TransferNo:  transferDetail.TransferNo,
+		ProductCode: transferDetail.ProductCode,
+		Qty:         transferDetail.Qty,
 	}
 	config.DB.Debug().Create(&newtransferDetail)
 
@@ -98,14 +98,14 @@ func TransferDetailUpdate(c fiber.Ctx) error {
 
 	// Validate required fields
 	if transferDetail.TransferNo == "" ||
-		transferDetail.ItemCode == "" ||
+		transferDetail.ProductCode == "" ||
 		transferDetail.Qty < 0 {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
 
 	config.DB.Debug().Model(&models.TransferDetail{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"transfer_no": transferDetail.TransferNo,
-		"code":        transferDetail.ItemCode,
+		"code":        transferDetail.ProductCode,
 		"qty":         transferDetail.Qty,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{

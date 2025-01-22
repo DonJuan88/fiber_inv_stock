@@ -57,7 +57,7 @@ func PurchaseCreate(c fiber.Ctx) error {
 		purchase.Tax1 < 0 ||
 		purchase.Tax2 < 0 ||
 		purchase.Total < 0 ||
-		purchase.AccountID == "" ||
+		purchase.UserID == "" ||
 		purchase.PaymentType == "" ||
 		purchase.ShipStatus == "" ||
 		purchase.Reference == "" ||
@@ -85,7 +85,7 @@ func PurchaseCreate(c fiber.Ctx) error {
 		Tax1:          purchase.Tax1,
 		Tax2:          purchase.Tax2,
 		Total:         purchase.Total,
-		AccountID:     purchase.AccountID,
+		UserID:        purchase.UserID,
 		PaymentType:   purchase.PaymentType,
 		ShipStatus:    purchase.ShipStatus,
 		Reference:     purchase.Reference,
@@ -101,6 +101,8 @@ func PurchaseCreate(c fiber.Ctx) error {
 
 func PurchaseUpdate(c fiber.Ctx) error {
 	purchase := new(models.Purchase)
+
+	//referenceTimeString := referenceTime.Format(layout)
 
 	if err := c.Bind().Body(purchase); err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -118,14 +120,14 @@ func PurchaseUpdate(c fiber.Ctx) error {
 
 	// Validate required fields
 	if purchase.PurchaseNo == "" ||
-		purchase.PurchaseDate.GoString() == "" ||
+		///		time.Parse(layout, purchase.PurchaseDate) == "" ||
 		purchase.BranchCode == "" ||
 		purchase.Supplier == "" ||
 		purchase.ShippingCost < 0 ||
 		purchase.Tax1 < 0 ||
 		purchase.Tax2 < 0 ||
 		purchase.Total < 0 ||
-		purchase.AccountID == "" ||
+		purchase.UserID == "" ||
 		purchase.PaymentType == "" ||
 		purchase.ShipStatus == "" ||
 		purchase.Reference == "" ||
@@ -142,7 +144,7 @@ func PurchaseUpdate(c fiber.Ctx) error {
 		"tax1":                      purchase.Tax1,
 		"tax2":                      purchase.Tax2,
 		"total":                     purchase.Total,
-		"accid":                     purchase.AccountID,
+		"user_id":                   purchase.UserID,
 		"paymenttype":               purchase.PaymentType,
 		"shippingstatus":            purchase.ShipStatus,
 		"reference":                 purchase.Reference,

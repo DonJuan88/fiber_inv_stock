@@ -16,7 +16,7 @@ func NotificationIndex(c fiber.Ctx) error {
 		c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "notification not found",
 		})
-
+		config.DB.Exec("call")
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{

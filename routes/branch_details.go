@@ -8,8 +8,8 @@ import (
 
 func BranchStockRoutes(r fiber.Router) {
 	//	r.Get("/branchStock/:id", controllers.BranchStockShow)
-	r.Get("/branchStock", controllers.BranchStockIndex)
-	r.Post("/branchStock", controllers.BranchStockCreate)
-	r.Put("/branchStock/:id", controllers.BranchStockUpdate)
+	r.Get("/branchstock", controllers.BranchStockIndex)
+	r.Post("/branchstock", controllers.BranchStockCreate)
+	r.Put("/branchstock/:id", controllers.BranchStockUpdate)
 	//	r.Delete("/branchStock/:id", controllers.BranchStockDelete)
 }

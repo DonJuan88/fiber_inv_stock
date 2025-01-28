@@ -7,9 +7,9 @@ import (
 )
 
 func CustomerRoutes(r fiber.Router) {
-	r.Get("/customer/:id", controllers.CustomerShow)
-	r.Get("/customer", controllers.CustomerIndex)
-	r.Post("/customer", controllers.CustomerCreate)
-	r.Put("/customer/:id", controllers.CustomerUpdate)
-	r.Delete("/customer/:id", controllers.CustomerDelete)
+	r.Get("/customers/:id", controllers.CustomerShow)
+	r.Get("/customers", controllers.CustomerIndex)
+	r.Post("/customers", controllers.CustomerCreate)
+	r.Put("/customers/:id", controllers.CustomerUpdate)
+	r.Delete("/customers/:id", controllers.CustomerDelete)
 }

@@ -19,6 +19,7 @@ type Company struct {
 	State              string         `json:"state"`
 	PostalCode         string         `json:"postalcode"`
 	Country            string         `json:"country"`
+	LocationID         string         `json:"location"`
 	CreatedAt          time.Time      `json:"created_at"`
 	UpdatedAt          time.Time      `json:"updated_at"`
 	DeletedAt          gorm.DeletedAt `json:"deleted_at" gorm:"index"`

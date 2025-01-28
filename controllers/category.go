@@ -88,7 +88,7 @@ func CategoryCreate(c fiber.Ctx) error {
 	}
 	config.DB.Debug().Create(&newCategory)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"data": category,
 	})
 }

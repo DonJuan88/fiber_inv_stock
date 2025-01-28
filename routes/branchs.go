@@ -7,9 +7,9 @@ import (
 )
 
 func BranchRoutes(r fiber.Router) {
-	r.Get("/branch/:id", controllers.BranchShow)
-	r.Get("/branch", controllers.BranchIndex)
-	r.Post("/branch", controllers.BranchCreate)
-	r.Put("/branch/:id", controllers.BranchUpdate)
-	r.Delete("/branch/:id", controllers.BranchDelete)
+	r.Get("/branchs/:id", controllers.BranchShow)
+	r.Get("/branchs", controllers.BranchIndex)
+	r.Post("/branchs", controllers.BranchCreate)
+	r.Put("/branchs/:id", controllers.BranchUpdate)
+	r.Delete("/branchs/:id", controllers.BranchDelete)
 }

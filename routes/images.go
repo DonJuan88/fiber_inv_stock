@@ -7,9 +7,9 @@ import (
 )
 
 func ImageRoutes(r fiber.Router) {
-	r.Get("/image/:id", controllers.ImageShow)
-	r.Get("/image", controllers.ImageIndex)
-	r.Post("/image", controllers.ImagePost)
+	r.Get("/images/:id", controllers.ImageShow)
+	r.Get("/images", controllers.ImageIndex)
+	r.Post("/images", controllers.ImagePost)
 	//	r.Put("/image/:id", controllers.Ima)
-	r.Delete("/image/:id", controllers.ImageDelete)
+	r.Delete("/images/:id", controllers.ImageDelete)
 }

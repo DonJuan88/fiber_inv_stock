@@ -55,6 +55,7 @@ func BranchCreate(c fiber.Ctx) error {
 		branch.BranchAddress == "" ||
 		branch.ContactPerson == "" ||
 		branch.ContactPersonPhone == "" ||
+		branch.Comment == "" ||
 		branch.Phone == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
@@ -92,6 +93,7 @@ func BranchCreate(c fiber.Ctx) error {
 		BranchAddress:      branch.BranchAddress,
 		ContactPerson:      branch.ContactPerson,
 		ContactPersonPhone: branch.ContactPersonPhone,
+		Comment:            branch.Comment,
 		Phone:              branch.Phone,
 		Active:             true,
 	}
@@ -135,6 +137,7 @@ func BranchUpdate(c fiber.Ctx) error {
 		branch.BranchAddress == "" ||
 		branch.ContactPerson == "" ||
 		branch.ContactPersonPhone == "" ||
+		branch.Comment == "" ||
 		branch.Phone == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Complete the fields"})
 	}
@@ -146,6 +149,7 @@ func BranchUpdate(c fiber.Ctx) error {
 		"contact_person":       branch.ContactPerson,
 		"contact_person_phone": branch.ContactPersonPhone,
 		"phone":                branch.Phone,
+		"comment":              branch.Comment,
 		"active":               branch.Active,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -156,7 +160,7 @@ func BranchUpdate(c fiber.Ctx) error {
 func BranchDelete(c fiber.Ctx) error {
 	branch := new(models.Branch)
 
-	id := c.Params("branch_code")
+	id := c.Params("id")
 	_, err := uuid.Parse(id)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID format"})

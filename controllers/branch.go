@@ -166,7 +166,7 @@ func BranchDelete(c fiber.Ctx) error {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid UUID format"})
 	}
 
-	config.DB.Debug().Where("branch_code = ?", id).Delete(&branch)
+	config.DB.Debug().Where("id = ?", id).Delete(&branch)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "delete branch successfully",

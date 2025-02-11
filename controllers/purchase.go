@@ -27,7 +27,7 @@ func PurchaseIndex(c fiber.Ctx) error {
 func PurchaseShow(c fiber.Ctx) error {
 	var purchase []*models.Purchase
 
-	if result := config.DB.Debug().First(&purchase, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&purchase, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "purchase not found",
 		})

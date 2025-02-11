@@ -27,11 +27,16 @@ func CustomerIndex(c fiber.Ctx) error {
 func CustomerShow(c fiber.Ctx) error {
 	var customer []*models.Customer
 
-	if result := config.DB.Debug().First(&customer, c.Params("id")); result.Error != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "customers not found",
+	if result := config.DB.Debug().First(&customer, c.Params("id=?")); result.Error != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Customer not found",
 		})
 	}
+	//if result := config.DB.Debug().First(&customer, c.Params("id")); result.Error != nil {
+	//	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	//		"message": "customers not found",
+	//	})
+	//}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": customer,
@@ -128,6 +133,7 @@ func CustomerUpdate(c fiber.Ctx) error {
 	if customer.CustomerID == "" ||
 		customer.CustomerName == "" ||
 		customer.ContactPerson == "" ||
+		customer.PostalCode == "" ||
 		customer.Email == "" ||
 		customer.Phone == "" ||
 		customer.Address == "" ||
@@ -139,16 +145,16 @@ func CustomerUpdate(c fiber.Ctx) error {
 	}
 
 	config.DB.Debug().Model(&models.Customer{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"code":       customer.CustomerID,
-		"name":       customer.CustomerName,
-		"cp":         customer.ContactPerson,
-		"email":      customer.Email,
-		"phone":      customer.Phone,
-		"address":    customer.Address,
-		"city":       customer.City,
-		"state":      customer.State,
-		"postalcode": customer.PostalCode,
-		"country":    customer.Country,
+		"code":           customer.CustomerID,
+		"name":           customer.CustomerName,
+		"contact_person": customer.ContactPerson,
+		"email":          customer.Email,
+		"phone":          customer.Phone,
+		"address":        customer.Address,
+		"city":           customer.City,
+		"state":          customer.State,
+		"postalcode":     customer.PostalCode,
+		"country":        customer.Country,
 	})
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"data": customer,

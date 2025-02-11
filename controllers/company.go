@@ -12,7 +12,7 @@ import (
 func CompanyShow(c fiber.Ctx) error {
 	var company []*models.Company
 
-	if result := config.DB.Debug().First(&company, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&company, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "company not found",
 		})

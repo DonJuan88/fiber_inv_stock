@@ -28,7 +28,7 @@ func ProductIndex(c fiber.Ctx) error {
 func ProductShow(c fiber.Ctx) error {
 	var product []*models.Product
 
-	if result := config.DB.Debug().First(&product, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&product, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "product not found",
 		})

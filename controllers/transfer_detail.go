@@ -28,7 +28,7 @@ import (
 func TransferDetailShow(c fiber.Ctx) error {
 	var transferDetail []*models.TransferDetail
 
-	if result := config.DB.Debug().First(&transferDetail, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().Find(&transferDetail, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "transfer not found",
 		})

@@ -28,7 +28,7 @@ func BrandIndex(c fiber.Ctx) error {
 func BrandShow(c fiber.Ctx) error {
 	var brand []*models.Brands
 
-	if result := config.DB.Debug().First(&brand, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&brand, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Brand not found",
 		})

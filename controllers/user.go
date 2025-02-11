@@ -27,7 +27,7 @@ func UserIndex(c fiber.Ctx) error {
 func UserShow(c fiber.Ctx) error {
 	var user []*models.User
 
-	if result := config.DB.Debug().First(&user, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&user, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "users not found",
 		})

@@ -12,7 +12,7 @@ import (
 func MessageShow(c fiber.Ctx) error {
 	var messages []*models.Message
 
-	if result := config.DB.Debug().First(&messages, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&messages, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"data": "message not found",
 		})

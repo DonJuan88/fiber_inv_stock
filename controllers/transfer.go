@@ -27,7 +27,7 @@ func TransferIndex(c fiber.Ctx) error {
 func TransferShow(c fiber.Ctx) error {
 	var transfer []*models.Transfer
 
-	if result := config.DB.Debug().First(&transfer, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&transfer, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "transfer not found",
 		})

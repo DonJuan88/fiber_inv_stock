@@ -74,7 +74,7 @@ func ImagePost(c fiber.Ctx) error {
 func ImageShow(c fiber.Ctx) error {
 	var images []models.ProductImage
 
-	if result := config.DB.Debug().First(&images, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().Find(&images, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Image not found",
 		})

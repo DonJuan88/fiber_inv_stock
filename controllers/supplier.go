@@ -27,7 +27,7 @@ func SupplierIndex(c fiber.Ctx) error {
 func SupplierShow(c fiber.Ctx) error {
 	var supplier []*models.Supplier
 
-	if result := config.DB.Debug().First(&supplier, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&supplier, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "suppliers not found",
 		})

@@ -27,7 +27,7 @@ func NotificationIndex(c fiber.Ctx) error {
 func NotificationShow(c fiber.Ctx) error {
 	var notification []*models.Notification
 
-	if result := config.DB.Debug().First(&notification, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&notification, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "notification not found",
 		})

@@ -27,7 +27,7 @@ func SaleIndex(c fiber.Ctx) error {
 func SaleShow(c fiber.Ctx) error {
 	var sale []*models.Sale
 
-	if result := config.DB.Debug().First(&sale, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&sale, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "sale not found",
 		})

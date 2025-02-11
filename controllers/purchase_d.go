@@ -28,7 +28,7 @@ import (
 func PurchaseDetailShow(c fiber.Ctx) error {
 	var purchaseDetail []*models.PurchaseDetail
 
-	if result := config.DB.Debug().First(&purchaseDetail, c.Params("id")); result.Error != nil {
+	if result := config.DB.Debug().First(&purchaseDetail, c.Params("id=?")); result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "purchase not found",
 		})
